@@ -1,6 +1,8 @@
 # Ignore .csv data file
 *.csv
 
+# ignore the .vscode folder
+.vscode/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
