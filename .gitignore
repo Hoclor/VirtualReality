@@ -1,6 +1,11 @@
 # Ignore .csv data file
 *.csv
 
+# Ignore LaTeX related files
+*.aux
+*.gz
+*.log
+
 # ignore the .vscode folder
 .vscode/*
 

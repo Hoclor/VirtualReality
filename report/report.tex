@@ -1,0 +1,161 @@
+\documentclass[12pt,a4paper]{article}
+%\usepackage{harvard}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{color}
+\usepackage{caption}
+%\usepackage{pgfplots}
+%\usepackage{tikz}
+%\usepackage{wrapfig,lipsum,booktabs}
+%\usepackage{enumitem}
+
+\captionsetup[figure]{labelfont=bf}
+\captionsetup[table]{labelfont=bf}
+
+\title{\vspace{-6em}Virtual and Augmented Reality}
+\author{pbqk24}
+%\date{}
+
+
+\begin{document}
+	
+	\maketitle
+	
+	\section*{Problem 1}
+	
+	Write a couple of sentences about the functional interfaces created and their inputs/outputs:
+	\begin{itemize}
+		\item Euler angle $\leftarrow\rightarrow$ quaternion conversions
+		\item Quaternion conjugate calculation
+		\item Quaternion product calculation
+	\end{itemize}
+	
+	The following functional interfaces were created:
+	
+	\begin{tabular}{|c|ll|}
+		\hline
+		Functional interface&Inputs&Outputs\\
+		Test&test&test\\
+		\hline
+	\end{tabular}
+	
+	
+	\begin{itemize}
+		\setlength{\itemsep}{0em}
+		\item Euler angle $\rightarrow$ quaternion conversion
+		\begin{itemize}
+			\setlength{\itemsep}{0em}
+			\item Input:
+			\item Output:
+		\end{itemize}
+		\item Quaternion $\rightarrow$ Euler angle conversion
+		\begin{itemize}
+			\item Input/Output as above but swapped
+		\end{itemize}
+		\item Quaternion conjugate calculation
+		\begin{itemize}
+			\item Input: 
+			\item Output:
+		\end{itemize}
+		\item Quaternion product calculation
+		\begin{itemize}
+			\item Input:
+			\item Output: 
+		\end{itemize}
+	\end{itemize}
+	
+	\section*{Problem 3}
+	
+	Alpha values and their effect on drift compensation for tilt correction.
+	
+	\section*{Problem 4}
+	
+	Alpha values and their effect on drift compensation in yaw correction.
+	
+	\section*{Problem 5}
+	
+	Include screenshots of orientation tracking results, and comment on the stability of each method.
+	
+	\section*{Problem 6}
+	
+	Comment on what you see in the 3D plots of positional tracking results.
+	
+	%\begin{figure}[h]
+	%	\centering
+	%	\label{point_operations}
+	%	\begin{minipage}{0.45\textwidth}
+	%		\centering
+	%		\includegraphics[width=0.9\linewidth]{point_addition}
+	%	\end{minipage}
+	%	\begin{minipage}{0.1\textwidth}
+	%		
+	%	\end{minipage}
+	%	\begin{minipage}{0.45\textwidth}
+	%		\centering
+	%		\includegraphics[width=0.819\linewidth]{point_doubling}
+	%	\end{minipage}
+	%	\caption[Figure 1:]{Point addition (left) and doubling (right) in Elliptic Curve Cryptography, \cite{Dams}}
+	%\end{figure}
+	
+	%\begin{wrapfigure}{l}{0.59\linewidth}
+	%	\begin{center}
+	%		\begin{tikzpicture}[
+	%		every node/.style={text=black},
+	%		fdesc/.style={anchor=south east,sloped,font=\scriptsize,pos=#1},
+	%		fdesc/.default=1,
+	%		]
+	%		\begin{semilogyaxis}[
+	%		width=\linewidth, % scale plot to \linewidth
+	%		grid=major, % Display a grid
+	%		grid style={dashed,gray!30}, % Set the style
+	%		xlabel=Order size (bits), % Set the x-axis label
+	%		ylabel=Wall clock time (seconds), % Set the y-axis label
+	%		log basis y={10}, % Set the base for logarithm in y axis
+	%		log ticks with fixed point
+	%		]
+	%		\addplot[only marks, color=red] table[x=Value, y=Time, col sep=comma] {rsa_bruteforce.csv}; % RSA plot
+	%		\addplot[only marks, color=blue] table[x=order, y=time, col sep=comma] {ecc_bruteforce.csv}; % ECC plot
+	%		\addplot [domain= 13:33, blue, dashed] {7.61337*(10^(-7))*(2^(1.01784*x))}node[left]{$y=7.61336*10^{-7}*2^{1.01784x}$}; % ECC trendline
+	%		\addplot [domain= 13:40, red, dashed] {1.71328*(10^(-4))*(2^(0.42945*x))}node[right, pos=0]{$y=1.71328*10^{-4}*2^{0.42945x}$}; % %
+	%		RSA trendline
+	%		\end{semilogyaxis}
+	%		\end{tikzpicture}
+	%	\end{center}
+	%	\caption[Figure 2:]{Average brute-force attack times against varying order/key sizes in elliptic curve cryptography (blue) and RSA (red)}
+	%	\label{ECC_BruteForce}
+	%\end{wrapfigure}
+	
+	%\begin{figure}[h!]
+	%	\begin{center}
+	%		\begin{tikzpicture}
+	%		\begin{axis}[
+	%		width=\linewidth*0.45, % scale plot to \linewidth
+	%		grid=major, % Display a grid
+	%		grid style={dashed,gray!30}, % Set the style
+	%		xlabel=Number of point addition operations used, % Set the x-axis label
+	%		ylabel=Wall clock time (seconds), % Set the y-axis label
+	%		]
+	%		\addplot[only marks, mark size = 1.5pt, color=blue] table[x=Value, y=Time, col sep=comma] {k_additions.csv};
+	%		\addplot[only marks, mark size = 1.5pt, color=red] table[x=Value, y=Time, col sep=comma] {private_additions.csv};
+	%		\end{axis}
+	%		\end{tikzpicture}%
+	%		~%
+	%		%
+	%		\begin{tikzpicture}
+	%		\begin{axis}[
+	%		width=\linewidth*0.45, % scale plot to \linewidth
+	%		grid=major, % Display a grid
+	%		grid style={dashed,gray!30}, % Set the style
+	%		xlabel=Number of point doubling operations used, % Set the x-axis label
+	%		ylabel=Time (seconds), % Set the y-axis label
+	%		]
+	%		\addplot[only marks, color=blue] table[x=Value, y=Time, col sep=comma] {k_doublings.csv};
+	%		\addplot[only marks, color=red] table[x=Value, y=Time, col sep=comma] {private_doublings.csv};
+	%		\end{axis}
+	%		\end{tikzpicture}
+	%	\end{center}
+	%	\caption[Figure 2:]{Time delay of signature generation compared to the number of point addition operations carried out using signature key $k$ (blue) and private key $A_{priv}$ (red)}
+	%	\label{Timing_attack_doublings}
+	%\end{figure}
+	
+\end{document}
