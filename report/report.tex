@@ -1,10 +1,12 @@
 \documentclass[12pt,a4paper]{article}
 %\usepackage{harvard}
+\usepackage[margin=2cm]{geometry}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{color}
 \usepackage{caption}
 \usepackage{tabu}
+\usepackage{gensymb}
 %\usepackage{pgfplots}
 %\usepackage{tikz}
 %\usepackage{wrapfig,lipsum,booktabs}
@@ -13,66 +15,90 @@
 \captionsetup[figure]{labelfont=bf}
 \captionsetup[table]{labelfont=bf}
 
-\title{\vspace{-6em}Virtual and Augmented Reality}
+\title{\vspace{-3em}Virtual and Augmented Reality}
 \author{pbqk24}
 %\date{}
 
 
 \begin{document}
-	
 	\maketitle
 	
-	\section*{Problem 1}
+	\vspace{-3em}
 	
-	Write a couple of sentences about the functional interfaces created and their inputs/outputs:
-	\begin{itemize}
-		\item Euler angle $\leftarrow\rightarrow$ quaternion conversions
-		\item Quaternion conjugate calculation
-		\item Quaternion product calculation
-	\end{itemize}
+	\section*{Problem 1}	
+	The following functional interfaces were created:\\
 	
-	The following functional interfaces were created:
-	
-	\begin{tabular}{|c|ll|}
-		
-		\hline
-		Functional interface&Inputs&Outputs\\
-		Test&test&test\\
-		\hline
-	\end{tabular}
-	
-	
-	\begin{itemize}
-		\setlength{\itemsep}{0em}
-		\item Euler angle $\rightarrow$ quaternion conversion
-		\begin{itemize}
-			\setlength{\itemsep}{0em}
-			\item Input:
-			\item Output:
-		\end{itemize}
-		\item Quaternion $\rightarrow$ Euler angle conversion
-		\begin{itemize}
-			\item Input/Output as above but swapped
-		\end{itemize}
-		\item Quaternion conjugate calculation
-		\begin{itemize}
-			\item Input: 
-			\item Output:
-		\end{itemize}
-		\item Quaternion product calculation
-		\begin{itemize}
-			\item Input:
-			\item Output: 
-		\end{itemize}
-	\end{itemize}
+	\begin{table}[h!]
+		\caption{Functional interfaces implemented and their inputs/outputs}
+		\label{table_functional_interfaces}
+		\begin{tabu} to 1.0\linewidth {|X[l]|X[l]|X[l]|}	
+			\hline
+			\textbf{Functional interface}&\textbf{Inputs}&\textbf{Outputs}\\
+			\hline
+			Euler angle $\rightarrow$ quaternion conversion&Euler angles in radians of format $(x, y, z)$&A quaternion of format $(w, x, y, z)$\\
+			\hline
+			Quaternion $\rightarrow$ Euler angle conversion&A quaternion of format $(w, x, y, z)$&Euler angles in radians of format $(x, y, z)$\\
+			\hline
+			Quaternion conjugate calculation&A quaternion of format $(w, x, y, z)$& The conjugate of the input: $(w, -x, -y, -z)$\\
+			\hline
+			Quaternion product calculation&Two quaternions $a, b$ of format $(w, x, y, z)$&The product of $a$ and $b$ of format $(w, x, y, z)$\\
+			\hline
+		\end{tabu}\\
+	\end{table}
+
+	\noindent Similar descriptions for each function are also included in the code.
 	
 	\section*{Problem 3}
 	
-	Alpha values and their effect on drift compensation for tilt correction.
+	Several different alpha values were investigated for the tilt-corrected orientation tracking. They are listed in Table \ref{table_alpha_tilt} below, along with a description of the findings:
 	
+	\begin{table}[h!]
+		\caption{Effect of Alpha Values on Drift Compensation in Tilt-Corrected Orientation Tracking}
+		\label{table_alpha_tilt}
+		\begin{tabu} to 1.0\linewidth {|r|X[l]|}
+			\hline
+			alpha&Description\\
+			\hline
+			$0.01$&Minimal change from simple dead reckoning filter. Slightly reduces the manifestation of gimbal lock in $X$ and $Y$ axes during the $-90\degree$ rotation around $Y$. $X$ and $Y$ rotations are marginally further from $0$ at the end of the sequence.\\
+			\hline
+			$0.03$&Slight increase in the manifestation of gimbal lock compared to an alpha of $0.01$. $X$ and $Y$ components converge marginally closer to $0$ than alpha of $0.01$ and in dead reckoning filter, although the change is extremely subtle.\\
+			\hline
+			$0.05$&Significantly compressed gimbal lock manifestation when $Y \simeq \pm90$. $X$, $Y$ and $Z$ all converge to $0$ at the end of the sequence, however the last rotation of $90\degree$ in $Z$ has decayed to $\sim45\degree$.\\
+			\hline
+			$0.1$&Complete decay of all angles to $0$ after $t\sim8s$. Before this the $90\degree$ rotation around $X$ occurs, which reaches $90\degree$ then quickly falls towards $0$, instead of staying $\sim90$ for a few seconds as expected. The orientation tracking has completely failed, as the noisy corrections introduced by the tilt correction completely overpower any actual rotations registered after the first few seconds. This effect becomes more extreme as alpha is further increased.\\
+			\hline
+		\end{tabu}
+	\end{table}
+	
+	\noindent An alpha value of $0.03$ was chosen as the best value, as this causes the $X$ and $Y$ components to be closest to $0$ at the end of the sequence without decaying the tracking of any of the $\pm90\degree$ rotations.
+
 	\section*{Problem 4}
 	
-	Alpha values and their effect on drift compensation in yaw correction.
+	As for Problem 3 above, several alpha values were investigated for the yaw-corrected orientation tracking. They are listed in Table \ref{table_alpha_yaw} below, along with a description of the findings. All investigation was done with an alpha of $0.03$ for tilt-correction; the alpha listed below is specifically the alpha used for yaw-correction.
+	
+	\begin{table}[h!]
+		\caption{Effect of Alpha Values on Drift Compensation in Yaw-Corrected Orientation Tracking}
+		\label{table_alpha_yaw}
+		\begin{tabu} to 1.0\linewidth {|r|X[l]|}
+			\hline
+			alpha&Description\\
+			\hline
+			$0.0001$&The $Z$ component is slightly closer to $0$ at the end of the sequence, but there is still significant drift present. Thus, the yaw correction being applied is not strong enough.\\
+			\hline
+			$0.0002$&At this alpha value the $Z$ component is reduced to 0 at the end of the sequence (around $t\sim24$), without decaying the $90\degree$ rotations or causing any visible inconsistencies in the graph.\\
+			\hline
+			$0.0005$&The yaw drift is over-compensated, resulting in a significant drift in the $Z$ component at the end of the sequence, reaching $\sim\frac{-\pi}{2}$. This decay of the $Z$ component is noticeable from the end of the $-90\degree$ rotation around $Y$ at $t\sim16$.\\
+			\hline
+			$0.001$&Similar results as with alpha $=0.0005$, but more extreme. The $Z$ rotation is decayed by $\sim\frac{-\pi}{2}$ from $t\sim16$ to the end of the sequence.\\
+			\hline
+			$0.01$&The decay of $\sim\frac{-\pi}{2}$ in the $Z$ compoent is constant starting from $t\sim2$. Significant noise is present in the $Z$ rotation, making it rapidly `jitter.'\\
+			\hline
+			$0.1$&The $Z$ rotation shows the same general shape as for alpha $=0.01$, but the amount of noise is significantly larger. There are also occasional jumps from $-\pi$ to $+\pi$, for example when the headset is rotated by $-90\degree$ around the $Z$ axis.\\
+			\hline
+		\end{tabu}
+	\end{table}
+	
+	\noindent An alpha value of $0.0002$ was chosen as the best value, as this caused the $Z$ component to converge with $X$ and $Y$ at $0$ at the end of the sequence.
 	
 	\section*{Problem 5}
 	
