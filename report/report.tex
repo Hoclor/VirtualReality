@@ -16,7 +16,6 @@
 \author{pbqk24}
 %\date{}
 
-
 \begin{document}
 	\maketitle
 	
@@ -28,7 +27,7 @@
 	\begin{table}[h!]
 		\caption{Functional interfaces implemented and their inputs/outputs}
 		\label{table_functional_interfaces}
-		\begin{tabu} to 1.0\linewidth {|X[l]|X[l]|X[l]|}	
+		\begin{tabu} to 1.0\linewidth {|X[l]|X[l]|X[l]|}
 			\hline
 			\textbf{Functional interface}&\textbf{Inputs}&\textbf{Outputs}\\
 			\hline
@@ -56,13 +55,13 @@
 			\hline
 			alpha&Description\\
 			\hline
-			$0.01$&Minimal change from simple dead reckoning filter. Slightly reduces the manifestation of gimbal lock in $X$ and $Y$ axes during the $-90\degree$ rotation around $Y$. $X$ and $Y$ rotations are marginally further from $0$ at the end of the sequence.\\
+			$0.01$&Minimal change from simple dead reckoning filter. Slightly reduces the manifestation of gimbal lock in $X$ and $Y$ axes during the $-90\degree$ rotation around $Y$. $X$ and $Y$ rcomponents are marginally further from $0$ at the end of the sequence.\\
 			\hline
-			$0.03$&Slight increase in the manifestation of gimbal lock compared to an alpha of $0.01$. $X$ and $Y$ components converge marginally closer to $0$ than alpha of $0.01$ and in dead reckoning filter, although the change is extremely subtle.\\
+			$0.03$&Slight increase in the manifestation of gimbal lock compared to an alpha of $0.01$. $X$ and $Y$ components converge marginally closer to $0$ than with an alpha of $0.01$ and in dead reckoning filter, although the change is extremely subtle.\\
 			\hline
-			$0.05$&Significantly compressed gimbal lock manifestation when $Y \simeq \pm90$. $X$, $Y$ and $Z$ all converge to $0$ at the end of the sequence, however the last rotation of $90\degree$ in $Z$ has decayed to $\sim45\degree$.\\
+			$0.05$&Significantly reduced gimbal lock manifestation when $Y \simeq \pm90$. $X$, $Y$ and $Z$ all converge to $0$ at the end of the sequence, however the last rotation of $90\degree$ in $Z$ has decayed to $\sim45\degree$.\\
 			\hline
-			$0.10$&Complete decay of all angles to $0$ after $t\sim8s$. Before this the $90\degree$ rotation around $X$ occurs, which reaches $90\degree$ then quickly falls towards $0$, instead of staying $\sim90$ for a few seconds as expected. The orientation tracking has completely failed, as the (imperfect) corrections introduced by the tilt correction completely overpower any actual rotations registered after the first few seconds. This effect becomes more extreme as alpha is further increased.\\
+			$0.10$&Complete decay of all angles to $0$ after $t\sim8s$. Before this the $90\degree$ rotation around $X$ occurs, which reaches $90\degree$ then quickly falls towards $0$, instead of staying $\sim90\degree$ for a few seconds as expected. The orientation tracking has completely failed, as the (imperfect) corrections introduced by the tilt correction completely overpower any actual rotations registered after the first few seconds. This effect becomes more extreme as alpha is further increased.\\
 			\hline
 		\end{tabu}
 	\end{table}
@@ -80,9 +79,9 @@
 			\hline
 			alpha&Description\\
 			\hline
-			$0.0001$&The $Z$ component is slightly closer to $0$ at the end of the sequence, but there is still significant drift present. Thus, the yaw correction being applied is not strong enough.\\
+			$0.0001$&The $Z$ component is slightly closer to $0$ at the end of the sequence, but there is still significant drift present. Thus, the yaw correction being applied is not strong enough, and a higher alpha value should be used.\\
 			\hline
-			$0.0002$&At this alpha value the $Z$ component is reduced to 0 at the end of the sequence (around $t\sim24s$), without decaying the $90\degree$ rotations or causing any visible inconsistencies in the graph.\\
+			$0.0002$&At this alpha value the $Z$ component is reduced to 0 at the end of the sequence, without decaying the $90\degree$ rotations or causing any visible inconsistencies in the graph. This produces the best results of all alpha values investigated\\
 			\hline
 			$0.0005$&The yaw drift is over-compensated, resulting in a significant drift in the $Z$ component at the end of the sequence, reaching $\sim\frac{-\pi}{2}$. This decay of the $Z$ component is noticeable from the end of the $-90\degree$ rotation around $Y$ at $t\sim16s$.\\
 			\hline
@@ -98,6 +97,8 @@
 	\noindent An alpha value of $0.0002$ was chosen as the best value, as this caused the $Z$ component to converge with $X$ and $Y$ at $0$ at the end of the sequence. Additionally, with this alpha there is no noticeable distortion or over-correction at any point during the sequence.
 	
 	\section*{Problem 5}
+	
+	Note: the 3D plots produced for Problems 5 and 6 skip data points in order to render in the requested full-speed and half-speed. For full-speed, only every 25\textsuperscript{th} orientation is plotted, while for half-speed every 12\textsuperscript{th} orientation is plotted (these were the highest resolutions that worked for these speed constraints on my laptop). This is due to the rendering capabilities of Matplotlib, and the speeds may vary slightly depending on your hardware.
 	
 	\begin{figure}[h!]
 		\centering
@@ -124,21 +125,21 @@
 	
 	\section*{Problem 6}
 	
-	In order to try to achieve positional tracking using the IMU, I double integrated the accelerometer readings and applied a two-bar kinematic head model. This assumes that the head is locked to the neck, the neck can be rotated at the joint to the torso, and the torso can be rotated around the waist. This was applied as follows:
+	In order to try to achieve positional tracking using the IMU, I double integrated the accelerometer readings and applied a two-bar kinematic head model. This assumes that the head is locked to the neck, the neck can be rotated about its base (at the joint to the torso), and the torso can be rotated around the waist. This was applied as follows:
 	
 	\begin{enumerate}[noitemsep]
-		\item Convert acceleration readings to global acceleration by rotating the readings by the current head orientation estimate
+		\item Convert acceleration readings to global acceleration by rotating the readings by the current head orientation estimate: $a_{global}=q*(0, a_x, a_y, a_z)*q^{-1}$
 		\item Extract linear acceleration by subtracting gravity (1) from the $Z$ component
-		\item Integrate the linear acceleration into velocity and convert into angular velocity as $\omega=\frac{a_l*\Delta t}{l_t}$, where $a_l$ is linear acceleration, $\Delta t$ is the time since the last time step, and $l_t$ is the length of the torso.
-		Note: this makes the assumption that the linear acceleration is caused by a rotation of the body, not of the neck and body combined
+		\item Integrate the linear acceleration into velocity and convert into angular velocity as $\omega=\frac{a_l*\Delta t}{l_t}$, where $a_l$ is linear acceleration, $\Delta t$ is the time since the last time step, and $l_t$ is an estimated length of the torso, e.g. $l_t=0.8m$.
+		\textbf{Note:} this makes the assumption that the linear acceleration is caused by a rotation of the body, rather than the neck and body combined
 		\item Add the previous angular velocity reading to produce the current angular velocity
 		\item Apply the simple dead reckoning filter to get an estimate for the orientation of the torso, $q_1$
 		\item Calculate the position of the torso relative to the origin (the waist) as $r_1=q_1*(0,0,l_t)*q_1^{-1}$
-		\item Apply the simple kinematic head model to get the position of the head relative to the torso, $r$, as $r=q*(0,0,l_n)*q^{-1}$, where $l_n$ is the estimated length of the neck, and $q$ is the current estimated head orientation
+		\item Apply the simple kinematic head model to get the position of the head relative to the torso, $r$, as $r=q*(0,0,l_n)*q^{-1}$, where $l_n$ is the estimated length of the neck, e.g. $l_n=0.15m$, and $q$ is the current estimated head orientation
 		\item Compose the two positions to get the global position of the head as $p=r_1+r$
 	\end{enumerate}
 
-	This approach constrains the position of the head to what could physically be reached by a person anchored at the waist, e.g. when sitting down. Even with these constraints and the short duration of the data sequence (around 28s) there is significant drift in the positional tracking. One example of this is shown in Figure \ref{Position_Y_Rotation}. This shows a snapshot of the head position tracking for all three methods of orientation tracking, shortly after the $+90\degree$ rotation about the $Y$ axis ($t\sim12s$). In this image the gyroscope integration based method shows extremely high drift in the $X$ and $Y$ components. The other two tracking methods show slight drift, as they have a lower $X$ position than would be expected, but fare much better than the gyroscope integration. This is likely due to the poor performance of the gyroscope integration orientation tracking resulting in much larger errors due to the quadratic growth of drift error.
+	This approach constrains the position of the head to what could physically be reached by a person anchored at the waist, such as when sitting down. Even with these constraints and the short duration of the data sequence (around 28s) there is significant drift in the positional tracking. One example of this is shown in Figure \ref{Position_Y_Rotation}. This shows a snapshot of the head position tracking for all three methods of orientation tracking, shortly after the $+90\degree$ rotation about the $Y$ axis ($t\sim12s$). In this image the gyroscope integration based method shows some drift in the $X$ and $Y$ components, and very high drift in $Z$ (see also Figure \ref{Position_2D}). The other tracking methods show slight drift, as they have a lower $X$ position than would be expected, but fare much better than the gyroscope integration. This is likely due to the poor performance of the gyroscope integration orientation tracking resulting in much larger errors due to the quadratic growth of drift error.
 	
 	\begin{figure}[h!]
 		\centering
@@ -147,19 +148,19 @@
 		\label{Position_Y_Rotation}
 	\end{figure}
 
-	Figure \ref{Position_2D} shows the tri-axial position tracking output for the three types of tracking. The left image shows tilt-corrected and yaw-corrected tracking: these produce extremely similar positions. The right image shows gyroscopic integration position tracking. This is vaguely similar to the other graph until $t\sim5s$, where the positions all enter sinusoidal patterns. This is quite incorrect, and such tracking would likely make a user of the system ill very quickly. As previously mentioned, this drastic difference in positional tracking performance is likely due to the lacking performance of gyroscopic integration for orientation tracking, as well as the compounding of errors amplified by integration which are not corrected for.
+	Figure \ref{Position_2D} shows the tri-axial position tracking output for the three types of tracking. The left image shows gyroscopic integration position tracking. The right image shows tilt-corrected and yaw-corrected tracking, which produced extremely similar results. The gyroscope results are vaguely similar to the other methods until $t\sim5s$, where the positions all enter sinusoidal patterns. This obviously incorrect, and such tracking would likely make a user of the system ill very quickly. As previously mentioned, this drastic difference in positional tracking performance is likely caused by the poor performance of gyroscopic integration for orientation tracking, and the compounding of errors amplified by integration which are not corrected for.
 	
 	\begin{figure}[h!]
 		\centering
 		\begin{minipage}{0.45\linewidth}
-			\includegraphics[width=1.0\linewidth]{figures/Position_Tracking_2D_Yaw_Tilt}
-		\end{minipage}
-		\begin{minipage}{0.45\linewidth}
-			\includegraphics[width=1.0\linewidth]{figures/Position_Tracking_2D_Gyro}
+			\includegraphics[width=0.9\linewidth]{figures/Position_Tracking_2D_Gyro}
 		\end{minipage}		
+		\begin{minipage}{0.45\linewidth}
+			\includegraphics[width=0.9\linewidth]{figures/Position_Tracking_2D_Yaw_Tilt}
+		\end{minipage}
 		\caption{Example 3D Result of Various Methods for Head Orientation Tracking}
 		\label{Position_2D}
 	\end{figure}
 
-	All methods of orientation tracking show significant drift in all three axes in positional tracking. This is likely caused by two main factors. Firstly, there is a large assumption made that the linear acceleration corresponds to rotation of the torso about the waist, rather than the neck around the base of the neck (or likely a combination of the two). This assumption was made in order to simplify the kinematic system, and justified by the fact that the neck often only slightly moves around its base, and most movement of the head relative to the waist is due to a rotation/movement of the torso. Secondly, a large amount of error is introduced by the double integration of the accelerometer readings. Numerical integration by itself produces inaccurate results, and this is only made worse by applying a double integration to already noisy data (as the accelerometer itself has inherent noise, and the local to global frame conversion is based on an imperfect head orientation estimate). All these sources of noise compound to produce potentially massive errors in the result, which are propagated in each time step to the next. Thus, any positional tracking based only on the IMU with no external frame of reference is going suffer from large drift and propagated errors.
+	All methods of orientation tracking show significant drift in all three axes in positional tracking. This is likely caused by two main factors. Firstly, there is the large assumption made that the linear acceleration corresponds to rotation of the torso about the waist, rather than the neck around the base of the neck (or likely a combination of the two). This assumption was made in order to simplify the kinematic system, and justified by the fact that the neck often only slightly moves around its base, and most of the movement of the head relative to the waist is due to a rotation of the torso. Secondly, a large amount of error is introduced by the double integration of the accelerometer readings. Numerical integration by itself produces inaccurate results, and this is only made worse by applying double integration to already noisy data (as the accelerometer itself has inherent noise, and the local to global frame conversion is based on an imperfect head orientation estimate). All these sources of noise compound to produce potentially massive errors in the result, which are propagated in each time step of the tracking. Thus, any positional tracking based only on the IMU with no external frame of reference is going suffer from large drift and propagated errors.
 \end{document}
