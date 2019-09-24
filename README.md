@@ -1,2 +1,4 @@
-# VirtualReality
+# Emulation of IMU Firmware for Virtual and Augmented Reality Headsets
 Code for the Virtual and Augmented Reality coursework for the `Virtual and Augmented Reality` submodule as part of the `Contemporary Computer Science IV` module, taken in my fourth year of Computer Science (MEng) at Durham University.
+
+For this project I created emulated firmware to read, process and analyse data from an IMU dataset (emulating a real IMU being used in a VR headset). This ranged from creating functional interfaces for processing data in different formats, to performing tilt- and yaw-corrected orientation tracking, to investigating positional tracking using double integration of accelerometer readings and a kinetic head model. The results are all discussed in the [report](https://github.com/Hoclor/VirtualReality/blob/master/report/report.pdf).
